@@ -1,0 +1,82 @@
+[
+  {
+    "id": "1",
+    "title": "Prepare quarterly presentation",
+    "category": "Work",
+    "priority": "High",
+    "dueDate": "2024-12-20T14:00:00.000Z",
+    "completed": false,
+    "createdAt": "2024-12-15T09:00:00.000Z",
+    "notes": "Include Q4 performance metrics and 2025 goals"
+  },
+  {
+    "id": "2",
+    "title": "Schedule dentist appointment",
+    "category": "Health",
+    "priority": "Medium",
+    "dueDate": "2024-12-18T10:00:00.000Z",
+    "completed": false,
+    "createdAt": "2024-12-14T16:30:00.000Z",
+    "notes": "6-month cleaning due"
+  },
+  {
+    "id": "3",
+    "title": "Buy groceries for weekend dinner",
+    "category": "Shopping",
+    "priority": "Medium",
+    "dueDate": "2024-12-17T18:00:00.000Z",
+    "completed": true,
+    "createdAt": "2024-12-16T08:15:00.000Z",
+    "notes": "Ingredients for pasta carbonara and Caesar salad"
+  },
+  {
+    "id": "4",
+    "title": "Call mom for her birthday",
+    "category": "Personal",
+    "priority": "High",
+    "dueDate": "2024-12-19T12:00:00.000Z",
+    "completed": false,
+    "createdAt": "2024-12-14T20:00:00.000Z",
+    "notes": "Don't forget to ask about the garden project"
+  },
+  {
+    "id": "5",
+    "title": "Update LinkedIn profile",
+    "category": "Work",
+    "priority": "Low",
+    "dueDate": null,
+    "completed": false,
+    "createdAt": "2024-12-13T14:45:00.000Z",
+    "notes": "Add recent project achievements and new skills"
+  },
+  {
+    "id": "6",
+    "title": "Plan weekend hiking trip",
+    "category": "Personal",
+    "priority": "Medium",
+    "dueDate": "2024-12-16T20:00:00.000Z",
+    "completed": true,
+    "createdAt": "2024-12-12T19:30:00.000Z",
+    "notes": "Check weather forecast and pack accordingly"
+  },
+  {
+    "id": "7",
+    "title": "Review team performance reports",
+    "category": "Work",
+    "priority": "High",
+    "dueDate": "2024-12-18T09:00:00.000Z",
+    "completed": false,
+    "createdAt": "2024-12-15T11:20:00.000Z",
+    "notes": "Prepare feedback for 1-on-1 meetings next week"
+  },
+  {
+    "id": "8",
+    "title": "Order Christmas gifts online",
+    "category": "Shopping",
+    "priority": "Medium",
+    "dueDate": "2024-12-20T23:59:00.000Z",
+    "completed": false,
+    "createdAt": "2024-12-11T15:00:00.000Z",
+    "notes": "Make sure delivery arrives before December 24th"
+  }
+]
