@@ -5,21 +5,21 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 class StatsService {
   async getOverallStats() {
     await delay(250);
-    const tasks = await taskService.getAll();
+const tasks = await taskService.getAll();
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     // Today's stats
     const todayTasks = tasks.filter(t => {
-      const taskDate = new Date(t.createdAt);
+      const taskDate = new Date(t.createdAt || t.created_at);
       return taskDate >= today;
     });
     const todayCompleted = todayTasks.filter(t => t.completed).length;
 
     // Weekly stats
-    const weekTasks = tasks.filter(t => {
-      const taskDate = new Date(t.createdAt);
+const weekTasks = tasks.filter(t => {
+      const taskDate = new Date(t.createdAt || t.created_at);
       return taskDate >= weekAgo;
     });
     const weekCompleted = weekTasks.filter(t => t.completed).length;
@@ -30,7 +30,7 @@ class StatsService {
     
     for (let i = 0; i < 30; i++) { // Check last 30 days
       const dayTasks = tasks.filter(t => {
-        const taskDate = new Date(t.createdAt);
+        const taskDate = new Date(t.createdAt || t.created_at);
         return taskDate.toDateString() === checkDate.toDateString();
       });
       
@@ -53,8 +53,8 @@ class StatsService {
       currentStreak,
       totalTasks: tasks.length,
       completedTasks: tasks.filter(t => t.completed).length,
-      overdueTasks: tasks.filter(t => {
-        return !t.completed && t.dueDate && new Date(t.dueDate) < now;
+overdueTasks: tasks.filter(t => {
+        return !t.completed && (t.dueDate || t.due_date) && new Date(t.dueDate || t.due_date) < now;
       }).length
     };
   }

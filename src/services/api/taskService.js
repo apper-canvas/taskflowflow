@@ -1,110 +1,479 @@
-import taskData from '../mockData/tasks.json';
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { toast } from 'react-toastify';
 
 class TaskService {
   constructor() {
-    this.tasks = [...taskData];
+    this.apperClient = null;
+    this.initClient();
+  }
+
+  initClient() {
+    if (typeof window !== 'undefined' && window.ApperSDK) {
+      const { ApperClient } = window.ApperSDK;
+      this.apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+    }
   }
 
   async getAll() {
-    await delay(300);
-    return [...this.tasks];
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        Fields: ['Id', 'title', 'category', 'priority', 'due_date', 'completed', 'created_at', 'notes'],
+        orderBy: [
+          { FieldName: 'completed', SortType: 'ASC' },
+          { FieldName: 'due_date', SortType: 'ASC' },
+          { FieldName: 'created_at', SortType: 'DESC' }
+        ]
+      };
+      
+      const response = await this.apperClient.fetchRecords('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+      
+      return (response.data || []).map(task => ({
+        id: task.Id,
+        title: task.title,
+        category: task.category,
+        priority: task.priority,
+        dueDate: task.due_date,
+        completed: task.completed,
+        createdAt: task.created_at,
+        notes: task.notes
+      }));
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      return [];
+    }
   }
 
   async getById(id) {
-    await delay(200);
-    const task = this.tasks.find(t => t.id === id);
-    return task ? { ...task } : null;
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        fields: ['Id', 'title', 'category', 'priority', 'due_date', 'completed', 'created_at', 'notes']
+      };
+      
+      const response = await this.apperClient.getRecordById('task', id, params);
+      
+      if (!response || !response.data) {
+        return null;
+      }
+      
+      const task = response.data;
+      return {
+        id: task.Id,
+        title: task.title,
+        category: task.category,
+        priority: task.priority,
+        dueDate: task.due_date,
+        completed: task.completed,
+        createdAt: task.created_at,
+        notes: task.notes
+      };
+    } catch (error) {
+      console.error(`Error fetching task with ID ${id}:`, error);
+      return null;
+    }
   }
 
   async getByCategory(category) {
-    await delay(250);
-    return this.tasks.filter(t => t.category === category).map(t => ({ ...t }));
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        Fields: ['Id', 'title', 'category', 'priority', 'due_date', 'completed', 'created_at', 'notes'],
+        where: [
+          {
+            FieldName: 'category',
+            Operator: 'ExactMatch',
+            Values: [category]
+          }
+        ]
+      };
+      
+      const response = await this.apperClient.fetchRecords('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+      
+      return (response.data || []).map(task => ({
+        id: task.Id,
+        title: task.title,
+        category: task.category,
+        priority: task.priority,
+        dueDate: task.due_date,
+        completed: task.completed,
+        createdAt: task.created_at,
+        notes: task.notes
+      }));
+    } catch (error) {
+      console.error('Error fetching tasks by category:', error);
+      return [];
+    }
   }
 
   async getByStatus(completed) {
-    await delay(250);
-    return this.tasks.filter(t => t.completed === completed).map(t => ({ ...t }));
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        Fields: ['Id', 'title', 'category', 'priority', 'due_date', 'completed', 'created_at', 'notes'],
+        where: [
+          {
+            FieldName: 'completed',
+            Operator: 'ExactMatch',
+            Values: [completed]
+          }
+        ]
+      };
+      
+      const response = await this.apperClient.fetchRecords('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+      
+      return (response.data || []).map(task => ({
+        id: task.Id,
+        title: task.title,
+        category: task.category,
+        priority: task.priority,
+        dueDate: task.due_date,
+        completed: task.completed,
+        createdAt: task.created_at,
+        notes: task.notes
+      }));
+    } catch (error) {
+      console.error('Error fetching tasks by status:', error);
+      return [];
+    }
   }
 
   async search(query) {
-    await delay(200);
-    const searchTerm = query.toLowerCase();
-    return this.tasks
-      .filter(t => 
-        t.title.toLowerCase().includes(searchTerm) ||
-        t.notes.toLowerCase().includes(searchTerm)
-      )
-      .map(t => ({ ...t }));
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        Fields: ['Id', 'title', 'category', 'priority', 'due_date', 'completed', 'created_at', 'notes'],
+        where: [
+          {
+            FieldName: 'title',
+            Operator: 'Contains',
+            Values: [query]
+          }
+        ]
+      };
+      
+      const response = await this.apperClient.fetchRecords('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+      
+      return (response.data || []).map(task => ({
+        id: task.Id,
+        title: task.title,
+        category: task.category,
+        priority: task.priority,
+        dueDate: task.due_date,
+        completed: task.completed,
+        createdAt: task.created_at,
+        notes: task.notes
+      }));
+    } catch (error) {
+      console.error('Error searching tasks:', error);
+      return [];
+    }
   }
 
   async create(taskData) {
-    await delay(300);
-    const newTask = {
-      id: Date.now().toString(),
-      ...taskData,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    };
-    this.tasks.push(newTask);
-    return { ...newTask };
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        records: [
+          {
+            title: taskData.title,
+            category: taskData.category,
+            priority: taskData.priority,
+            due_date: taskData.dueDate || null,
+            completed: false,
+            created_at: new Date().toISOString(),
+            notes: taskData.notes || ''
+          }
+        ]
+      };
+      
+      const response = await this.apperClient.createRecord('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create task:${JSON.stringify(failedRecords)}`);
+          failedRecords.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successfulRecords.length > 0) {
+          const task = successfulRecords[0].data;
+          return {
+            id: task.Id,
+            title: task.title,
+            category: task.category,
+            priority: task.priority,
+            dueDate: task.due_date,
+            completed: task.completed,
+            createdAt: task.created_at,
+            notes: task.notes
+          };
+        }
+      }
+      
+      throw new Error('Failed to create task');
+    } catch (error) {
+      console.error('Error creating task:', error);
+      throw error;
+    }
   }
 
   async update(id, updateData) {
-    await delay(300);
-    const index = this.tasks.findIndex(t => t.id === id);
-    if (index === -1) throw new Error('Task not found');
-    
-    this.tasks[index] = { ...this.tasks[index], ...updateData };
-    return { ...this.tasks[index] };
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        records: [
+          {
+            Id: parseInt(id),
+            ...updateData,
+            due_date: updateData.dueDate !== undefined ? updateData.dueDate : undefined,
+            created_at: updateData.createdAt !== undefined ? updateData.createdAt : undefined
+          }
+        ]
+      };
+      
+      // Remove undefined fields
+      Object.keys(params.records[0]).forEach(key => {
+        if (params.records[0][key] === undefined) {
+          delete params.records[0][key];
+        }
+      });
+      
+      const response = await this.apperClient.updateRecord('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update task:${JSON.stringify(failedRecords)}`);
+          failedRecords.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successfulRecords.length > 0) {
+          const task = successfulRecords[0].data;
+          return {
+            id: task.Id,
+            title: task.title,
+            category: task.category,
+            priority: task.priority,
+            dueDate: task.due_date,
+            completed: task.completed,
+            createdAt: task.created_at,
+            notes: task.notes
+          };
+        }
+      }
+      
+      throw new Error('Failed to update task');
+    } catch (error) {
+      console.error('Error updating task:', error);
+      throw error;
+    }
   }
 
   async delete(id) {
-    await delay(300);
-    const index = this.tasks.findIndex(t => t.id === id);
-    if (index === -1) throw new Error('Task not found');
-    
-    const deletedTask = this.tasks.splice(index, 1)[0];
-    return { ...deletedTask };
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+      
+      const response = await this.apperClient.deleteRecord('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        throw new Error(response.message);
+      }
+      
+      if (response.results) {
+        const failedDeletions = response.results.filter(result => !result.success);
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete task:${JSON.stringify(failedDeletions)}`);
+          failedDeletions.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+          throw new Error('Failed to delete task');
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      throw error;
+    }
   }
 
   async bulkUpdate(ids, updateData) {
-    await delay(400);
-    const updatedTasks = [];
-    
-    for (const id of ids) {
-      const index = this.tasks.findIndex(t => t.id === id);
-      if (index !== -1) {
-        this.tasks[index] = { ...this.tasks[index], ...updateData };
-        updatedTasks.push({ ...this.tasks[index] });
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const records = ids.map(id => ({
+        Id: parseInt(id),
+        ...updateData
+      }));
+      
+      const params = { records };
+      
+      const response = await this.apperClient.updateRecord('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
       }
+      
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update ${failedRecords.length} tasks:${JSON.stringify(failedRecords)}`);
+        }
+        
+        return successfulRecords.map(result => ({
+          id: result.data.Id,
+          title: result.data.title,
+          category: result.data.category,
+          priority: result.data.priority,
+          dueDate: result.data.due_date,
+          completed: result.data.completed,
+          createdAt: result.data.created_at,
+          notes: result.data.notes
+        }));
+      }
+      
+      return [];
+    } catch (error) {
+      console.error('Error bulk updating tasks:', error);
+      return [];
     }
-    
-    return updatedTasks;
   }
 
   async bulkDelete(ids) {
-    await delay(400);
-    const deletedTasks = [];
-    
-    for (const id of ids) {
-      const index = this.tasks.findIndex(t => t.id === id);
-      if (index !== -1) {
-        deletedTasks.push({ ...this.tasks[index] });
-        this.tasks.splice(index, 1);
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const params = {
+        RecordIds: ids.map(id => parseInt(id))
+      };
+      
+      const response = await this.apperClient.deleteRecord('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return false;
       }
+      
+      if (response.results) {
+        const failedDeletions = response.results.filter(result => !result.success);
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete ${failedDeletions.length} tasks:${JSON.stringify(failedDeletions)}`);
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error bulk deleting tasks:', error);
+      return false;
     }
-    
-    return deletedTasks;
   }
 
   async getOverdue() {
-    await delay(250);
-    const now = new Date();
-    return this.tasks
-      .filter(t => !t.completed && t.dueDate && new Date(t.dueDate) < now)
-      .map(t => ({ ...t }));
+    try {
+      if (!this.apperClient) this.initClient();
+      
+      const now = new Date().toISOString();
+      const params = {
+        Fields: ['Id', 'title', 'category', 'priority', 'due_date', 'completed', 'created_at', 'notes'],
+        where: [
+          {
+            FieldName: 'completed',
+            Operator: 'ExactMatch',
+            Values: [false]
+          },
+          {
+            FieldName: 'due_date',
+            Operator: 'LessThan',
+            Values: [now]
+          }
+        ]
+      };
+      
+      const response = await this.apperClient.fetchRecords('task', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        return [];
+      }
+      
+      return (response.data || []).map(task => ({
+        id: task.Id,
+        title: task.title,
+        category: task.category,
+        priority: task.priority,
+        dueDate: task.due_date,
+        completed: task.completed,
+        createdAt: task.created_at,
+        notes: task.notes
+      }));
+    } catch (error) {
+      console.error('Error fetching overdue tasks:', error);
+      return [];
+    }
   }
 }
 
