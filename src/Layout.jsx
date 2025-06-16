@@ -20,13 +20,12 @@ const Layout = () => {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 rounded-lg hover:bg-surface-100 transition-colors"
             >
-              <ApperIcon name="Menu" size={20} />
-            </button>
-            <h1 className="text-xl font-heading font-bold text-primary ml-2">
-              TaskFlow
-            </h1>
-          </div>
-          
+<ApperIcon name="Menu" size={20} />
+          </button>
+          <h1 className="text-xl font-heading font-bold text-red-600 ml-2">
+            TaskFlow
+          </h1>
+        </div>
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center space-x-2 text-sm text-surface-600">
               <div className="w-2 h-2 bg-success rounded-full"></div>
@@ -72,13 +71,13 @@ const Layout = () => {
               exit={{ x: -280 }}
               className="absolute left-0 top-0 h-full w-64 bg-surface shadow-xl"
             >
-              <div className="p-4 border-b border-surface-200">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-heading font-bold text-primary">
-                    TaskFlow
-                  </h2>
-                  <button
-                    onClick={closeMobileMenu}
+<div className="p-4 border-b border-surface-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-heading font-bold text-red-600">
+                  TaskFlow
+                </h2>
+                <button
+                  onClick={closeMobileMenu}
                     className="p-2 rounded-lg hover:bg-surface-100"
                   >
                     <ApperIcon name="X" size={18} />
